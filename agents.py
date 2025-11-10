@@ -4,27 +4,29 @@ from crewai import Agent
 from tools import yt_tool
 from langchain_groq import ChatGroq
 
-
-
+# -----------------------------
 # Load environment variables
+# -----------------------------
 load_dotenv()
-os.environ["OPENAI_API_KEY"]=os.getenv("OPENAI_API_KEY")
-os.environ["OPENAI_MODEL_NAME"]="gpt-4-0125-preview"
+GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 
+CHROMA_OPENAI_API_KEY = os.getenv("CHROMA_OPENAI_API_KEY")
 
-# --- Load GROQ API Key ---
-#groq_api_key = os.getenv("GROQ_API_KEY")
-#if not groq_api_key:
-    #raise ValueError("❌ GROQ_API_KEY not found in environment variables. Please add it to your .env file.")
+if not GROQ_API_KEY:
+    raise ValueError("GROQ_API_KEY not found in environment variables. Please add it to your .env file.")
 
-# --- Initialize Groq LLM ---
-#llm = ChatGroq(
-    #api_key=groq_api_key,
-    #model="llama-3.3-70b-versatile",
-    #temperature=0.5
-#)
+# -----------------------------
+# Initialize Groq LLM
+# -----------------------------
+llm = ChatGroq(
+    api_key=GROQ_API_KEY,
+    model="llama-3.3-70b-versatile",
+    temperature=0.5
+)
 
-# --- Agents ---
+# -----------------------------
+# Initialize Agents
+# -----------------------------
 
 # Blog Researcher Agent
 blog_researcher = Agent(
@@ -33,11 +35,11 @@ blog_researcher = Agent(
     verbose=True,
     memory=True,
     backstory=(
-        "An expert in analyzing AI, Data Science, Machine Learning, and GenAI content, "
-        "you extract core insights from videos to help writers create strong blogs."
+        "An expert in analyzing AI, Data Science, Machine Learning, and GenAI content. "
+        "You extract core insights from videos to help writers create strong blogs."
     ),
     tools=[yt_tool],
-    llm =llm,
+    llm=llm,
     allow_delegation=True
 )
 
@@ -52,6 +54,6 @@ blog_writer = Agent(
         "that readers enjoy while learning something new."
     ),
     tools=[yt_tool],
-    llm = llm,
+    llm=llm,
     allow_delegation=False
 )
